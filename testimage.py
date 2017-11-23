@@ -113,8 +113,10 @@ landmark_error = 1 / 2 * tf.reduce_sum(tf.square(landmark - y_landmark))
 # train
 train_step = tf.train.AdamOptimizer(1e-3).minimize(error)
 
+trainName = "train(%d" % (img_size) + ")"
+
 saver = tf.train.Saver()
-ckpt = tf.train.get_checkpoint_state("train")
+ckpt = tf.train.get_checkpoint_state(trainName)
 
 print("Start test\n")
 img = cv2.imread('lfw_5590\Aaron_Eckhart_0001.jpg')    
@@ -158,7 +160,7 @@ with tf.Session() as sess:
     if ckpt and ckpt.model_checkpoint_path:        
         import re
         ckpt_name = os.path.basename(ckpt.model_checkpoint_path)
-        saver.restore(sess, os.path.join("train", ckpt_name))
+        saver.restore(sess, os.path.join(trainName, ckpt_name))
         counter = int(next(re.finditer("(\d+)(?!.*\d)",ckpt_name)).group(0))
         print(" [*] Success to read {}".format(ckpt_name))
     else:
