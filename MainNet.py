@@ -282,8 +282,9 @@ landmark_error = 1 / 2 * tf.reduce_sum(tf.square(landmark - y_landmark))
 # train
 train_step = tf.train.AdamOptimizer(1e-3).minimize(error)
 
+trainName = "train(%d" % (img_size) + ")"
 saver = tf.train.Saver()
-ckpt = tf.train.get_checkpoint_state("train")
+ckpt = tf.train.get_checkpoint_state(trainName)
 
 print("Start training\n")
 
@@ -292,7 +293,7 @@ with tf.Session() as sess:
     if ckpt and ckpt.model_checkpoint_path:        
         import re
         ckpt_name = os.path.basename(ckpt.model_checkpoint_path)
-        saver.restore(sess, os.path.join("train", ckpt_name))
+        saver.restore(sess, os.path.join(trainName, ckpt_name))
         counter = int(next(re.finditer("(\d+)(?!.*\d)",ckpt_name)).group(0))
         print(" [*] Success to read {}".format(ckpt_name))
     else:
@@ -315,7 +316,7 @@ with tf.Session() as sess:
           print("Hole error :",HoleError)
     
     model_name = "model"
-    checkpoint_dir = "train"
+    checkpoint_dir = trainName
 
     if not os.path.exists(checkpoint_dir):
         os.makedirs(checkpoint_dir)
